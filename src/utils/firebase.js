@@ -18,4 +18,5 @@ const settings = {
 db.settings(settings);
 
 export const questionsRef = db.collection("questions");
+export const raisedRef = db.collection("raised");
 export default firebase

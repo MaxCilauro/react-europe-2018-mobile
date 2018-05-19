@@ -2,30 +2,56 @@ import React, { Component } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import { Accelerometer } from 'expo';
+import { raisedRef } from '../../utils';
 
 export default class Create extends Component {
   state = {
-    hasPhoneRaised: false
+    hasPhoneRaised: false,
+    hasRaisedHand: []
   };
 
+  raisedRef = null;
+
   componentDidMount() {
+    this.raisedRef = raisedRef
+      .where("talkId", "==", this.props.talkId)
+      .onSnapshot(querySnapshot => {
+        const raisers = [];
+        querySnapshot.forEach(doc => {
+          const raiser = doc.data();
+          raiser.id = doc.id;
+          raisers.push(raiser);
+          this.setState({
+            hasRaisedHand: raisers
+          });
+        });
+      });
     this.onRaisedPhone();
+  }
+
+  componentWillUnmount () {
+    if (this.raisedRef) {
+      this.raisedRef();
+    }
   }
 
   onRaisedPhone() {
     Accelerometer.addListener(accelerometerData => {
       if (accelerometerData.y < -1.2) {
-        this.setState({ hasPhoneRaised: true });
-        console.warn('raised');
-      } else {
-        this.setState({ hasPhoneRaised: false });
+        if (!this.state.hasPhoneRaised) {
+          this.addNameToRaised();
+          this.setState({ hasPhoneRaised: true });
+        }
       }
     });
   }
 
-  sendInfoToFirebase() {
-    if (this.state.hasPhoneRaised) console.warn('RAISED');
-    else console.warn('NOT RAISED');
+  addNameToRaised() {
+    const { talkId, userName } = this.props;
+    raisedRef.add({
+      name: userName,
+      talkId
+    });
   }
 
   onPressPost = () => {
@@ -45,6 +71,7 @@ export default class Create extends Component {
   }
 
   render() {
+    console.warn(this.state.hasRaisedHand)
     return (
       <View style={styles.wrapper}>
         <TextInput

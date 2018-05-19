@@ -78,6 +78,7 @@ export default class Comments extends Component {
 
   render() {
     const { comments, hasTickets, ticket } = this.state;
+    const { talk } = this.props;
     return (
       <View>
         {hasTickets ? (
@@ -85,6 +86,8 @@ export default class Comments extends Component {
             <SemiBoldText>Comments Area</SemiBoldText>
             <List comments={comments} upvote={this.upvote} uid={ticket.id} />
             <Create
+              talkId={talk.id}
+              userName={`${ticket.firstName} ${ticket.lastName}`}
               onSubmit={question => {
                 this.submitQuestion(question);
               }}
