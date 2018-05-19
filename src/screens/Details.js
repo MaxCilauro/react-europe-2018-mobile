@@ -9,9 +9,9 @@ import {
   ScrollView,
   View,
   Linking,
-  AsyncStorage,
   KeyboardAvoidingView
 } from 'react-native';
+
 import { Constants, Video, WebBrowser } from 'expo';
 import FadeIn from 'react-native-fade-in-image';
 import ReadMore from 'react-native-read-more-text';
@@ -57,44 +57,6 @@ export default class Details extends React.Component {
     scrollY: new Animated.Value(0),
     ...this.getTalkInfo()
   };
-  questionsRef = null;
-
-  componentDidMount() {
-    const { talk } = this.state;
-    this.questionsRef = questionsRef
-      .where("id", "==", talk.id)
-      .onSnapshot((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          console.log(doc.data())
-        });
-      });
-  }
-
-  getMyTicket() {
-    return AsyncStorage.getItem("@MySuperStore:tickets")
-      .then((value) => {
-        const tickets = JSON.parse(value);
-        return tickets[0];
-      });
-  }
-
-  componentWillUnmount() {
-    if (this.questionsRef) {
-      this.questionsRef()
-    }
-  }
-
-  async submitQuestion(question) {
-    const ticket = await this.getMyTicket();
-    const { talk } = this.state;
-
-    questionsRef.add({
-      id: talk.id,
-      name: `${ticket.firstName} ${ticket.lastName}`,
-      question: "Test question",
-      upvotes: 0
-    })
-  }
 
   getTalkInfo() {
     let params = this.props.navigation.state.params || {};
@@ -280,7 +242,7 @@ export default class Details extends React.Component {
                 <RegularText>{talk.room}</RegularText>
               </View>
             ) : null}
-            <Comments />
+            <Comments talk={talk} />
           </AnimatableView>
         </AnimatedScrollView>
 

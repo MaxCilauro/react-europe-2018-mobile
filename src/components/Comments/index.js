@@ -1,54 +1,72 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import {
+  View,
+  AsyncStorage
+} from 'react-native';
 import { SemiBoldText } from '../../components/StyledText';
+import { questionsRef } from '../../utils';
 
 import Create from './Create';
 import List from './List';
 
-const comments = [
-  {
-    id: 1234,
-    content: 'This is my fancy question. Look how smart i am',
-    attendeeName: 'Johannes Nielsen',
-    likes: 5
-  },
-  {
-    id: 1265,
-    content:
-      'What is the meaning of life? like in the grand scheme of things it all seems very confusing',
-    attendeeName: 'Maximiliano Ciluaro',
-    likes: 0
-  },
-  {
-    id: 3421,
-    content:
-      'If eight ducks are crossing the streat at intervals of 27 seconds, what is the name of the bakers daughter?',
-    attendeeName: 'Pedro Early-riser',
-    likes: 3
-  },
-  {
-    id: 8984,
-    content: 'I am still very smart, please notice me!',
-    attendeeName: 'Johannes Nielsen',
-    likes: 100
-  }
-];
-
 export default class Comments extends Component {
   state = {
-    comments: comments
+    comments: []
   };
 
-  onPressComment = ({ id }) => {
-    alert(id);
-  };
+
+  questionsRef = null;
+
+  componentDidMount() {
+    const { talk } = this.props;
+    this.questionsRef = questionsRef
+      .where("talkId", "==", talk.id)
+      .onSnapshot((querySnapshot) => {
+        const comments = []
+        querySnapshot.forEach((doc) => {
+          const comment = doc.data();
+          comment.id = doc.id
+          comments.push(comment)
+        });
+        this.setState({ comments: comments })
+      });
+  }
+
+  componentWillUnmount() {
+    this.questionsRef();
+  }
+
+  getMyTicket () {
+    return AsyncStorage.getItem("@MySuperStore:tickets")
+      .then((value) => {
+        const tickets = JSON.parse(value);
+        return tickets[0];
+      });
+  }
+
+  upvote ({ id, upvotes }) {
+    questionsRef.doc(id).update({ upvotes: upvotes + 1 })
+  }
+
+  async submitQuestion(content) {
+    const ticket = await this.getMyTicket();
+    const { talk } = this.props;
+
+    questionsRef.add({
+      talkId: talk.id,
+      attendeeName: `${ticket.firstName} ${ticket.lastName}`,
+      content: content,
+      upvotes: 0
+    })
+  }
 
   render() {
+    const { comments } = this.state;
     return (
       <View>
         <SemiBoldText>Comments Area</SemiBoldText>
-        <List onPressComment={this.onPressComment} comments={this.state.comments} />
-        <Create />
+        <List comments={comments} upvote={this.upvote} />
+        <Create onSubmit={(question) => { this.submitQuestion(question) }} />
       </View>
     );
   }
