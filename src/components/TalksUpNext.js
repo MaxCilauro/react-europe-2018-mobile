@@ -72,7 +72,7 @@ export default class TalksUpNext extends React.Component {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: q })
     })
-      .catch(err => { console.warn(err)})
+      .catch(err => { console.warn(err) })
       .then(res => res.json())
       .then(res => {
         if (

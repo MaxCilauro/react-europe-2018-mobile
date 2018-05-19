@@ -3,6 +3,9 @@ import _ from "lodash";
 export const Schedule = require("../data/schedule.json");
 const Event = Schedule.events[0];
 
+const CONFERENCE_START_TIME = convertUtcDateToEventTimezone(Event.startDate);
+const CONFERENCE_END_TIME = moment.tz('2018-05-17T19:00:00', 'Europe/Paris');
+
 export function getSpeakerTalk(speaker) {
   const talk = _.find(speaker.talks, function(talk) {
     return talk.type === 0;
@@ -28,15 +31,12 @@ export function convertUtcDateToEventTimezoneDaytime(date) {
   return moment.tz(d, Event.timezoneId).format("dddd DD MMM, h:mma");
 }
 
-const CONFERENCE_START_TIME = convertUtcDateToEventTimezone(Event.startDate);
-const CONFERENCE_END_TIME = convertUtcDateToEventTimezone(Event.endDate);
-
 export function conferenceHasStarted() {
   return Event.status.hasStarted;
 }
 
 export function conferenceHasEnded() {
-  return Event.status.hasEnded;
+  return moment.tz('Europe/Paris').isAfter(CONFERENCE_END_TIME);
 }
 
 export function HideWhenConferenceHasStarted({ children }) {
