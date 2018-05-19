@@ -1,8 +1,9 @@
-import React, {Component} from 'react';
-import {View, Text} from 'react-native';
+import React, { Component } from 'react';
+import { View } from 'react-native';
+import { SemiBoldText } from '../../components/StyledText';
 
 import Create from './Create';
-import List from './List'
+import List from './List';
 
 const comments = [
   {
@@ -13,13 +14,15 @@ const comments = [
   },
   {
     id: 1265,
-    content: 'What is the meaning of life? like in the grand scheme of things it all seems very confusing',
+    content:
+      'What is the meaning of life? like in the grand scheme of things it all seems very confusing',
     attendeeName: 'Maximiliano Ciluaro',
     likes: 0
   },
   {
     id: 3421,
-    content: 'If eight ducks are crossing the streat at intervals of 27 seconds, what is the name of the bakers daughter?',
+    content:
+      'If eight ducks are crossing the streat at intervals of 27 seconds, what is the name of the bakers daughter?',
     attendeeName: 'Pedro Early-riser',
     likes: 3
   },
@@ -28,21 +31,21 @@ const comments = [
     content: 'I am still very smart, please notice me!',
     attendeeName: 'Johannes Nielsen',
     likes: 100
-  },
-]
+  }
+];
 
 export default class Comments extends Component {
-    state = {
-      comments: comments
-    }
+  state = {
+    comments: comments
+  };
 
-    render() {
-        return (
-        <View>
-            <Text>Comments Area</Text>
+  render() {
+    return (
+      <View>
+        <SemiBoldText>Comments Area</SemiBoldText>
         <List comments={this.state.comments} />
-        <Create/>
-
-        </View>)
-    }
+        <Create />
+      </View>
+    );
+  }
 }
