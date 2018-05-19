@@ -29,12 +29,14 @@ import { Ionicons } from '@expo/vector-icons';
 import CloseButton from '../components/CloseButton';
 import Markdown from 'react-native-simple-markdown';
 export const Schedule = require('../data/schedule.json');
+import Comments from '../components/Comments'
+
+
 const Event = Schedule.events[0];
 
 class SavedButtonNavigationItem extends React.Component {
   render() {
     const { talk } = this.props;
-
     return (
       <View
         style={{
@@ -240,6 +242,7 @@ export default class Details extends React.Component {
                 <RegularText>{talk.room}</RegularText>
               </View>
             ) : null}
+            <Comments />
           </AnimatableView>
         </AnimatedScrollView>
 
