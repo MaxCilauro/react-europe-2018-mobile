@@ -1,16 +1,11 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Title,
-  Paragraph
-} from "react-native-paper";
+import { View, FlatList, StyleSheet, Text, TouchableHighlight } from 'react-native';
+import { ListItem } from 'react-native-paper';
 import { Colors, FontSizes } from '../../constants';
+import { RegularText } from '../StyledText';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
-const keyExtractor = (item) => item.id.toString();
+const keyExtractor = item => item.id.toString();
 
 export default ({ comments, upvote }) => (
   <View>
@@ -25,22 +20,24 @@ export default ({ comments, upvote }) => (
 );
 
 const Comment = ({ id, content, attendeeName, upvotes, upvote }) => (
-  <Card>
-    <CardContent>
-      <Paragraph>{content}</Paragraph>
-      <Paragraph style={styles.attendeeName}>{attendeeName}</Paragraph>
-    </CardContent>
-    <CardActions>
-      <Text>{upvotes}</Text>
-      <Button onPress={() => { upvote({ id, upvotes }) }}>Like</Button>
-    </CardActions>
-  </Card>
+  <TouchableHighlight onPress={() => upvote({ id, upvotes })}>
+    <View style={{ flex: 1, flexDirection: 'row', marginTop: 10 }}>
+      <View style={{ marginRight: 5, flexDirection: 'column', alignItems: 'center' }}>
+        <Ionicons name="md-thumbs-up" size={32} color="gray" />
+        <Text>{upvotes}</Text>
+      </View>
+
+      <View style={{ flexDirection: 'column' }}>
+        <Text style={{ padding: 5 }}>{content}</Text>
+        <Text style={{ color: Colors.faint }}>{attendeeName}</Text>
+      </View>
+    </View>
+  </TouchableHighlight>
 );
 
 const styles = StyleSheet.create({
   attendeeName: {
     color: Colors.faint,
-    fontSize: FontSizes.subtitle,
-    textAlign: "right"
+    textAlign: 'right'
   }
-})
+});

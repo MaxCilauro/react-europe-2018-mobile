@@ -14,6 +14,7 @@ export default class Comments extends Component {
     comments: []
   };
 
+
   questionsRef = null;
 
   componentDidMount() {
@@ -43,8 +44,8 @@ export default class Comments extends Component {
       });
   }
 
-  upvote ({ id, upvote }) {
-    questionsRef.doc(comment.id).update({ upvotes: comment.upvotes + 1 })
+  upvote ({ id, upvotes }) {
+    questionsRef.doc(id).update({ upvotes: upvotes + 1 })
   }
 
   async submitQuestion(content) {
