@@ -14,9 +14,9 @@ export default class Create extends Component {
 
   onRaisedPhone() {
     Accelerometer.addListener(accelerometerData => {
-      if (accelerometerData.z < -1.4) {
+      if (accelerometerData.y < -1.2) {
         this.setState({ hasPhoneRaised: true });
-        console.warn('accelerometer.y', accelerometerData.z);
+        console.warn('raised');
       } else {
         this.setState({ hasPhoneRaised: false });
       }
