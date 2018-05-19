@@ -29,6 +29,7 @@ export default class Tickets extends React.Component {
     super(props);
     this.getTickets();
   }
+
   componentDidMount() {}
   render() {
     let tix = this.state.tickets || [];
