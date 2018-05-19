@@ -14,7 +14,6 @@ export default class Comments extends Component {
     comments: []
   };
 
-
   questionsRef = null;
 
   componentDidMount() {
@@ -28,6 +27,7 @@ export default class Comments extends Component {
           comment.id = doc.id
           comments.push(comment)
         });
+
         this.setState({ comments: comments })
       });
   }
