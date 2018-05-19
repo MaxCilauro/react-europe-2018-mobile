@@ -39,11 +39,15 @@ export default class Comments extends Component {
     comments: comments
   };
 
+  onPressComment = ({ id }) => {
+    alert(id);
+  };
+
   render() {
     return (
       <View>
         <SemiBoldText>Comments Area</SemiBoldText>
-        <List comments={this.state.comments} />
+        <List onPressComment={this.onPressComment} comments={this.state.comments} />
         <Create />
       </View>
     );
