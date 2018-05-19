@@ -24,7 +24,7 @@ class Comment extends Component {
   componentDidMount() {
     Animated.timing(this.state.fadeAnim, {
       toValue: 1,
-      duration: 5000
+      duration: 2000
     }).start();
   }
 
@@ -45,7 +45,7 @@ class Comment extends Component {
         >
           <View style={{ flex: 1, flexDirection: 'row', marginTop: 10 }}>
             <View style={{ marginRight: 5, flexDirection: 'column', alignItems: 'center' }}>
-              <Ionicons name="md-thumbs-up" size={32} color={hasVoted ? "blue" : "gray"} />
+              <Ionicons name="md-thumbs-up" size={32} color={hasVoted ? Colors.blue : Colors.faint} />
               <Text>{upvotes}</Text>
             </View>
 
