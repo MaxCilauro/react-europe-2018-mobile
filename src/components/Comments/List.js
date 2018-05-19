@@ -21,6 +21,7 @@ class Comment extends Component {
   state = {
     fadeAnim: new Animated.Value(0)
   };
+
   componentDidMount() {
     Animated.timing(this.state.fadeAnim, {
       toValue: 1,

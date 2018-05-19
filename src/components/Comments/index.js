@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { View, AsyncStorage, Text } from 'react-native';
+import { Accelerometer } from 'expo';
 import { RegularText, SemiBoldText } from '../../components/StyledText';
-import { questionsRef } from '../../utils';
+import { questionsRef, raisedRef } from '../../utils';
 
 import Create from './Create';
 import List from './List';
@@ -11,12 +12,36 @@ export default class Comments extends Component {
     comments: [],
     hasTickets: undefined,
     ticket: undefined,
-    hasRaisedHands: ['Max', 'Pedro']
+    hasRaisedHands: [],
+    hasPhoneRaised: false
   };
 
   questionsRef = null;
+  raisedRef = null;
+
+  onRaisedPhone() {
+    const unsuscribe = Accelerometer.addListener(accelerometerData => {
+      if (accelerometerData.y < -1.2) {
+        if (!this.state.hasPhoneRaised) {
+          this.addNameToRaised();
+          this.setState({ hasPhoneRaised: true });
+          Accelerometer.removeAllListeners()
+        }
+      }
+    });
+  }
+
+  addNameToRaised() {
+    const { talk } = this.props;
+    const { ticket } = this.state;
+    raisedRef.add({
+      name: `${ticket.firstName} ${ticket.lastName}`,
+      talkId: talk.id
+    });
+  }
 
   componentDidMount() {
+    const { talk } = this.props;
     this.getMyTicket().then(value => {
       if (!value) this.setState({ hasTickets: false });
       else {
@@ -24,10 +49,28 @@ export default class Comments extends Component {
         this.setState({ hasTickets: true, ticket: value });
       }
     });
+
+    this.raisedRef = raisedRef
+      .where("talkId", "==", talk.id)
+      .onSnapshot(querySnapshot => {
+        const raisers = [];
+        querySnapshot.forEach(doc => {
+          const raiser = doc.data();
+          raiser.id = doc.id;
+          raisers.push(raiser);
+          this.setState({
+            hasRaisedHands: raisers
+          });
+        });
+      });
+    this.onRaisedPhone();
   }
 
   componentWillUnmount() {
     this.state.hasTickets ? this.questionsRef() : null;
+    if (this.raisedRef) {
+      this.raisedRef();
+    }
   }
 
   queryFirebase() {
@@ -100,7 +143,7 @@ export default class Comments extends Component {
               shadowOffset: { width: 2, height: 2 }
             }}
           >
-            {hasRaisedHands.map((value, index) => <Text key={index}>{value}</Text>)}
+            {hasRaisedHands.map((value) => <Text key={value.id}>{value.name}</Text>)}
             <Text>has/have a raised hand!</Text>
           </View>
         ) : (
@@ -113,7 +156,6 @@ export default class Comments extends Component {
             <SemiBoldText>Comments Area</SemiBoldText>
             <List comments={comments} upvote={this.upvote} uid={ticket.id} />
             <Create
-              talkId={talk.id}
               userName={`${ticket.firstName} ${ticket.lastName}`}
               onSubmit={question => {
                 this.submitQuestion(question);
