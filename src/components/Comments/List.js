@@ -37,7 +37,7 @@ class Comment extends Component {
           <View style={{ flex: 1, flexDirection: 'row', marginTop: 10 }}>
             <View style={{ marginRight: 5, flexDirection: 'column', alignItems: 'center' }}>
               <Ionicons name="md-thumbs-up" size={32} color="gray" />
-              <Text>{likes}</Text>
+              <Text>{upvotes}</Text>
             </View>
 
             <View style={{ flexDirection: 'column' }}>
