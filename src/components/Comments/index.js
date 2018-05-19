@@ -31,7 +31,7 @@ export default class Comments extends Component {
 
   queryFirebase() {
     const { talk } = this.props;
-    this.questionsRef = questionsRef.where('talkId', '==', talk.id).onSnapshot(querySnapshot => {
+    this.questionsRef = questionsRef.where('talkId', '==', talk.id).orderBy('upvotes', 'desc').onSnapshot(querySnapshot => {
       const comments = [];
       querySnapshot.forEach(doc => {
         const comment = doc.data();
