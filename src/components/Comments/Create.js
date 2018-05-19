@@ -6,19 +6,6 @@ import { Accelerometer } from 'expo';
 export default class Create extends Component {
   state = {};
 
-  componentDidMount() {
-    this.onRaisedPhone();
-  }
-
-  onRaisedPhone() {
-    Accelerometer.addListener(accelerometerData => {
-      if (accelerometerData.y > -0.7) {
-        console.warn('hello');
-        Accelerometer.removeAllListeners();
-      }
-    });
-  }
-
   onPressPost = () => {
     this.setState({
       text: ''
