@@ -9,6 +9,8 @@ import {
   ScrollView,
   View,
   Linking,
+  AsyncStorage,
+  Button
 } from 'react-native';
 import { Constants, Video, WebBrowser } from 'expo';
 import FadeIn from 'react-native-fade-in-image';
@@ -21,7 +23,7 @@ import AnimatedScrollView from '../components/AnimatedScrollView';
 import NavigationBar from '../components/NavigationBar';
 import { Colors, FontSizes, Icons, Layout } from '../constants';
 import { RegularText, BoldText, SemiBoldText } from '../components/StyledText';
-import { getSpeakerTalk, convertUtcDateToEventTimezoneHour } from '../utils';
+import { getSpeakerTalk, convertUtcDateToEventTimezoneHour, questionsRef } from '../utils';
 import { findTalkData, findSpeakerData } from '../data';
 import SaveButton from '../components/SaveButton';
 import CachedImage from '../components/CachedImage';
@@ -51,9 +53,48 @@ class SavedButtonNavigationItem extends React.Component {
 export default class Details extends React.Component {
   state = {
     scrollY: new Animated.Value(0),
+    ...this.getTalkInfo()
   };
+  questionsRef = null;
 
-  render() {
+  componentDidMount() {
+    const { talk } = this.state;
+    this.questionsRef = questionsRef
+      .where("id", "==", talk.id)
+      .onSnapshot((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          console.log(doc.data())
+        });
+      });
+  }
+
+  getMyTicket() {
+    return AsyncStorage.getItem("@MySuperStore:tickets")
+      .then((value) => {
+        const tickets = JSON.parse(value);
+        return tickets[0];
+      });
+  }
+
+  componentWillUnmount() {
+    if (this.questionsRef) {
+      this.questionsRef()
+    }
+  }
+
+  async submitQuestion(question) {
+    const ticket = await this.getMyTicket();
+    const { talk } = this.state;
+
+    questionsRef.add({
+      id: talk.id,
+      name: `${ticket.firstName} ${ticket.lastName}`,
+      question: "Test question",
+      upvotes: 0
+    })
+  }
+
+  getTalkInfo() {
     let params = this.props.navigation.state.params || {};
     let speaker;
     let talk;
@@ -67,6 +108,13 @@ export default class Details extends React.Component {
         talk = getSpeakerTalk(speaker);
       }
     }
+
+    return { speaker, talk, talkScreen }
+  }
+
+  render() {
+    const { speaker, talk, talkScreen } = this.state
+
 
     const { scrollY } = this.state;
     const scale = scrollY.interpolate({

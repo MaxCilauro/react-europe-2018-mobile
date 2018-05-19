@@ -1,5 +1,7 @@
 import moment from "moment-timezone";
 import _ from "lodash";
+export firebase, { questionsRef } from './firebase';
+
 export const Schedule = require("../data/schedule.json");
 const Event = Schedule.events[0];
 
