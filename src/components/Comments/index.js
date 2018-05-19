@@ -9,7 +9,8 @@ import List from './List';
 export default class Comments extends Component {
   state = {
     comments: [],
-    hasTickets: undefined
+    hasTickets: undefined,
+    ticket: undefined
   };
 
   questionsRef = null;
@@ -19,7 +20,7 @@ export default class Comments extends Component {
       if (!value) this.setState({ hasTickets: false });
       else {
         this.queryFirebase();
-        this.setState({ hasTickets: true });
+        this.setState({ hasTickets: true, ticket: value });
       }
     });
   }
@@ -51,30 +52,32 @@ export default class Comments extends Component {
     });
   }
 
-  upvote({ id, upvotes }) {
-    questionsRef.doc(id).update({ upvotes: upvotes + 1 });
+  upvote({ id, upvotes, upvotedBy, uid }) {
+    updatedUpvotedBy = [...upvotedBy, uid]
+    questionsRef.doc(id).update({ upvotes: upvotes + 1, upvotedBy: updatedUpvotedBy });
   }
 
   async submitQuestion(content) {
-    const ticket = await this.getMyTicket();
+    const { ticket } = this.state;
     const { talk } = this.props;
 
     questionsRef.add({
       talkId: talk.id,
       attendeeName: `${ticket.firstName} ${ticket.lastName}`,
       content: content,
-      upvotes: 0
+      upvotes: 0,
+      upvotedBy: []
     });
   }
 
   render() {
-    const { comments, hasTickets } = this.state;
+    const { comments, hasTickets, ticket } = this.state;
     return (
       <View>
         {hasTickets ? (
           <View>
             <SemiBoldText>Comments Area</SemiBoldText>
-            <List comments={comments} upvote={this.upvote} />
+            <List comments={comments} upvote={this.upvote} uid={ticket.id} />
             <Create
               onSubmit={question => {
                 this.submitQuestion(question);
