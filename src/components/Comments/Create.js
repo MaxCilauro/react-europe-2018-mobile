@@ -1,9 +1,23 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
+import { Accelerometer } from 'expo';
 
 export default class Create extends Component {
   state = {};
+
+  componentDidMount() {
+    this.onRaisedPhone();
+  }
+
+  onRaisedPhone() {
+    Accelerometer.addListener(accelerometerData => {
+      if (accelerometerData.y > -0.7) {
+        console.warn('hello');
+        Accelerometer.removeAllListeners();
+      }
+    });
+  }
 
   onPressPost = () => {
     this.setState({
@@ -13,7 +27,7 @@ export default class Create extends Component {
 
   blur() {
     if (this.state.text) {
-      this.props.onSubmit(this.state.text)
+      this.props.onSubmit(this.state.text);
     }
 
     this.setState({
@@ -25,10 +39,12 @@ export default class Create extends Component {
     return (
       <View style={styles.wrapper}>
         <TextInput
-          label="Posty McPost Face"
+          label="Write a comment"
           onChangeText={text => this.setState({ text })}
           value={this.state.text}
-          onBlur={() => { this.blur() }}
+          onBlur={() => {
+            this.blur();
+          }}
         />
       </View>
     );
