@@ -36,9 +36,7 @@ class Comment extends Component {
       <Animated.View style={{ opacity: this.state.fadeAnim }}>
         <TouchableHighlight style={{backgroundColor: "#ffffff"}}
           onPress={() => {
-            if (!hasVoted) {
-              upvote({ id, upvotedBy, upvotes, uid });
-            }
+            upvote({ id, upvotedBy, upvotes, uid, hasVoted });
           }}
           activeOpacity={0.6}
           underlayColor="#ffffff"

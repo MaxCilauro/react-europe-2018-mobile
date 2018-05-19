@@ -52,9 +52,15 @@ export default class Comments extends Component {
     });
   }
 
-  upvote({ id, upvotes, upvotedBy, uid }) {
-    updatedUpvotedBy = [...upvotedBy, uid]
-    questionsRef.doc(id).update({ upvotes: upvotes + 1, upvotedBy: updatedUpvotedBy });
+  upvote({ id, upvotes, upvotedBy, uid, hasVoted }) {
+    let updatedUpvotedBy;
+    if (hasVoted) {
+      updatedUpvotedBy = upvotedBy.filter((votedId) => votedId !== uid);
+    } else {
+      updatedUpvotedBy = [...upvotedBy, uid];
+    }
+    const totalUpvotes = hasVoted ? upvotes - 1 : upvotes + 1;
+    questionsRef.doc(id).update({ upvotes: totalUpvotes, upvotedBy: updatedUpvotedBy });
   }
 
   async submitQuestion(content) {
