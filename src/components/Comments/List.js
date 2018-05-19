@@ -12,27 +12,27 @@ import { Colors, FontSizes } from '../../constants';
 
 const keyExtractor = (item) => item.id.toString();
 
-export default ({ comments }) => (
+export default ({ comments, upvote }) => (
   <View>
     <FlatList
       data={comments}
       keyExtractor={keyExtractor}
       renderItem={(item) => (
-        <Comment {...item.item} />
+        <Comment {...item.item} upvote={upvote} />
       )}
     />
   </View>
 );
 
-const Comment = ({ id, content, attendeeName, likes }) => (
+const Comment = ({ id, content, attendeeName, upvotes, upvote }) => (
   <Card>
     <CardContent>
       <Paragraph>{content}</Paragraph>
       <Paragraph style={styles.attendeeName}>{attendeeName}</Paragraph>
     </CardContent>
     <CardActions>
-      <Text>{likes}</Text>
-      <Button>Like</Button>
+      <Text>{upvotes}</Text>
+      <Button onPress={() => { upvote({ id, upvotes }) }}>Like</Button>
     </CardActions>
   </Card>
 );

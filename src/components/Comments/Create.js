@@ -11,6 +11,16 @@ export default class Create extends Component {
     });
   };
 
+  blur() {
+    if (this.state.text) {
+      this.props.onSubmit(this.state.text)
+    }
+
+    this.setState({
+      text: ''
+    });
+  }
+
   render() {
     return (
       <View style={styles.wrapper}>
@@ -18,7 +28,7 @@ export default class Create extends Component {
           label="Posty McPost Face"
           onChangeText={text => this.setState({ text })}
           value={this.state.text}
-          onBlur={() => {}}
+          onBlur={() => { this.blur() }}
         />
       </View>
     );
