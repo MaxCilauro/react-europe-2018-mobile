@@ -15,7 +15,7 @@ export function findNextTalksAfterDate(date = new Date(), allTalks = Talks) {
 }
 
 export function findRandomTalk(allTalks = Talks) {
-  let talks = _.filter(Talks, talk => talk.type === 0);
+  let talks = _.filter(allTalks, talk => talk.type === 0);
   return [_.sample(talks)];
 }
 

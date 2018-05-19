@@ -16,17 +16,13 @@ export default class TalksUpNext extends React.Component {
   constructor(props) {
     super(props);
 
-    let nextTalks =
-      conferenceHasEnded() || findNextTalksAfterDate().length === 0
-        ? findRandomTalk()
-        : findNextTalksAfterDate();
+    let nextTalks = conferenceHasEnded() ? findRandomTalk() : findNextTalksAfterDate();
     let dateTime;
     let time;
     if (nextTalks && nextTalks.length > 0 && !_.isUndefined(nextTalks[0])) {
       dateTime = nextTalks[0].startDate;
       time = nextTalks[0].startDate;
     }
-
     this.state = {
       nextTalks,
       dateTime,
@@ -34,45 +30,51 @@ export default class TalksUpNext extends React.Component {
     };
   }
   componentDidMount() {
+    if (!conferenceHasEnded) {
+      this.fetchNextTalk()
+    }
+  }
+
+  fetchNextTalk() {
     let q = `{
-  events(slug: "reacteurope-2018") {
-    id
-    status {
-      hasEnded
-      hasStarted
-      onGoing
-      nextFiveScheduledItems {
+      events(slug: "reacteurope-2018") {
         id
-        title
-        description
-        startDate
-        speakers {
-          id
-          name
-          twitter
-          avatarUrl
-          bio
-          talks {
+        status {
+          hasEnded
+          hasStarted
+          onGoing
+          nextFiveScheduledItems {
             id
-            description
             title
+            description
             startDate
+            speakers {
+              id
+              name
+              twitter
+              avatarUrl
+              bio
+              talks {
+                id
+                description
+                title
+                startDate
+              }
+            }
           }
         }
       }
     }
-  }
-}
-`;
+    `;
     let that = this;
     fetch("http://www.react-europe.org/gql", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: q })
     })
+      .catch(err => { console.warn(err)})
       .then(res => res.json())
       .then(res => {
-        console.log(res.data);
         if (
           res &&
           res.data &&
@@ -90,14 +92,12 @@ export default class TalksUpNext extends React.Component {
             dateTime: nextTalks[0].startDate,
             time: nextTalks[0].startDate
           });
-        } else {
-          that.setState({ nextTalks: [] });
         }
-      });
+      })
   }
+
   render() {
     const { nextTalks } = this.state;
-
     return (
       <View style={[{ marginHorizontal: 10 }, this.props.style]}>
         <SemiBoldText style={{ fontSize: FontSizes.title }}>
