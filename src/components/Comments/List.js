@@ -30,18 +30,22 @@ class Comment extends Component {
 
   render() {
     const { id, content, attendeeName, upvotes, upvote, upvotedBy, uid } = this.props;
-    console.warn(uid)
+    const hasVoted = upvotedBy.some((voted) => voted === uid);
+
     return (
       <Animated.View style={{ opacity: this.state.fadeAnim }}>
-        <TouchableHighlight onPress={() => {
-          const hasVoted = upvotedBy.some((voted) => voted === uid);
-          if (!hasVoted) {
-            upvote({ id, upvotedBy, upvotes, uid });
-          }
-        }} >
+        <TouchableHighlight style={{backgroundColor: "#ffffff"}}
+          onPress={() => {
+            if (!hasVoted) {
+              upvote({ id, upvotedBy, upvotes, uid });
+            }
+          }}
+          activeOpacity={0.6}
+          underlayColor="#ffffff"
+        >
           <View style={{ flex: 1, flexDirection: 'row', marginTop: 10 }}>
             <View style={{ marginRight: 5, flexDirection: 'column', alignItems: 'center' }}>
-              <Ionicons name="md-thumbs-up" size={32} color="gray" />
+              <Ionicons name="md-thumbs-up" size={32} color={hasVoted ? "blue" : "gray"} />
               <Text>{upvotes}</Text>
             </View>
 
