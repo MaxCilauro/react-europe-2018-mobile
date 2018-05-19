@@ -71,6 +71,7 @@ export default class Comments extends Component {
     if (this.raisedRef) {
       this.raisedRef();
     }
+    Accelerometer.removeAllListeners()
   }
 
   queryFirebase() {
@@ -147,9 +148,7 @@ export default class Comments extends Component {
             <Text>has/have a raised hand!</Text>
           </View>
         ) : (
-          <View>
-            <Text>no length</Text>
-          </View>
+          null
         )}
         {hasTickets ? (
           <View>
