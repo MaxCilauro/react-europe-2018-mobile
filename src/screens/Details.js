@@ -9,6 +9,7 @@ import {
   ScrollView,
   View,
   Linking,
+  KeyboardAvoidingView
 } from 'react-native';
 import { Constants, Video, WebBrowser } from 'expo';
 import FadeIn from 'react-native-fade-in-image';
@@ -29,8 +30,7 @@ import { Ionicons } from '@expo/vector-icons';
 import CloseButton from '../components/CloseButton';
 import Markdown from 'react-native-simple-markdown';
 export const Schedule = require('../data/schedule.json');
-import Comments from '../components/Comments'
-
+import Comments from '../components/Comments';
 
 const Event = Schedule.events[0];
 
@@ -42,8 +42,9 @@ class SavedButtonNavigationItem extends React.Component {
         style={{
           // gross dumb things
           paddingTop: Platform.OS === 'android' ? 30 : 0,
-          marginTop: Layout.notchHeight > 0 ? -5 : 0,
-        }}>
+          marginTop: Layout.notchHeight > 0 ? -5 : 0
+        }}
+      >
         <SaveButton talk={talk} />
       </View>
     );
@@ -52,7 +53,7 @@ class SavedButtonNavigationItem extends React.Component {
 
 export default class Details extends React.Component {
   state = {
-    scrollY: new Animated.Value(0),
+    scrollY: new Animated.Value(0)
   };
 
   render() {
@@ -74,22 +75,26 @@ export default class Details extends React.Component {
     const scale = scrollY.interpolate({
       inputRange: [-300, 0, 1],
       outputRange: [2, 1, 1],
-      extrapolate: 'clamp',
+      extrapolate: 'clamp'
     });
     const translateX = 0;
     const translateY = scrollY.interpolate({
       inputRange: [-300, 0, 1],
       outputRange: [-50, 1, 1],
-      extrapolate: 'clamp',
+      extrapolate: 'clamp'
     });
 
     const headerOpacity = scrollY.interpolate({
       inputRange: [0, 30, 200],
-      outputRange: [0, 0, 1],
+      outputRange: [0, 0, 1]
     });
 
     return (
-      <View style={{ flex: 1, backgroundColor: '#fff', overflow: 'hidden' }}>
+      <KeyboardAvoidingView
+        style={{ flex: 1, backgroundColor: '#fff', overflow: 'hidden' }}
+        behavior="padding"
+        enabled
+      >
         {Platform.OS === 'ios' ? (
           <Animated.View
             style={{
@@ -102,11 +107,11 @@ export default class Details extends React.Component {
                 {
                   translateY: scrollY.interpolate({
                     inputRange: [-1, 0, 1],
-                    outputRange: [1, 0, 0],
-                  }),
-                },
+                    outputRange: [1, 0, 0]
+                  })
+                }
               ],
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.blue
             }}
           />
         ) : null}
@@ -116,27 +121,28 @@ export default class Details extends React.Component {
           onScroll={Animated.event(
             [
               {
-                nativeEvent: { contentOffset: { y: this.state.scrollY } },
-              },
+                nativeEvent: { contentOffset: { y: this.state.scrollY } }
+              }
             ],
             { useNativeDriver: true }
-          )}>
+          )}
+        >
           <View style={styles.headerContainer}>
             <Animated.View
               style={{
-                transform: [{ scale }, { translateX }, { translateY }],
-              }}>
+                transform: [{ scale }, { translateX }, { translateY }]
+              }}
+            >
               <FadeIn placeholderStyle={{ backgroundColor: 'transparent' }}>
                 {talkScreen ? (
                   <View style={styles.headerRowSpeaker}>
                     {speakers
                       ? speakers.map((speaker, i) => (
-                          <View
-                            key={speaker.id}
-                            style={styles.headerColumnSpeaker}>
+                          <View key={speaker.id} style={styles.headerColumnSpeaker}>
                             <TouchableOpacity
                               key={speaker.id}
-                              onPress={() => this._handlePressSpeaker(speaker)}>
+                              onPress={() => this._handlePressSpeaker(speaker)}
+                            >
                               <CachedImage
                                 source={{ uri: speaker.avatarUrl }}
                                 style={styles.avatarMultiple}
@@ -147,12 +153,12 @@ export default class Details extends React.Component {
                               <View key={index}>
                                 <TouchableOpacity
                                   key={speaker.id}
-                                  onPress={() =>
-                                    this._handlePressSpeaker(speaker)
-                                  }>
+                                  onPress={() => this._handlePressSpeaker(speaker)}
+                                >
                                   <SemiBoldText
                                     style={styles.headerText}
-                                    key={'speakers' + speaker.id + name}>
+                                    key={'speakers' + speaker.id + name}
+                                  >
                                     {name}
                                   </SemiBoldText>
                                 </TouchableOpacity>
@@ -177,25 +183,19 @@ export default class Details extends React.Component {
               </SemiBoldText>
             )}
             {speaker && speaker.twitter ? (
-              <TouchableOpacity
-                onPress={() =>
-                  this._handlePressSpeakerTwitter(speaker.twitter)
-                }>
-                <RegularText style={styles.headerText}>
-                  @{speaker.twitter}
-                </RegularText>
+              <TouchableOpacity onPress={() => this._handlePressSpeakerTwitter(speaker.twitter)}>
+                <RegularText style={styles.headerText}>@{speaker.twitter}</RegularText>
               </TouchableOpacity>
             ) : null}
-            {talk ? (
-              <BoldText style={styles.talkTitleText}>{talk.title}</BoldText>
-            ) : null}
+            {talk ? <BoldText style={styles.talkTitleText}>{talk.title}</BoldText> : null}
           </View>
           <AnimatableView
             animation="fadeIn"
             useNativeDriver
             delay={Platform.OS === 'ios' ? 50 : 150}
             duration={500}
-            style={styles.content}>
+            style={styles.content}
+          >
             {talkScreen ? null : (
               <View>
                 <SemiBoldText style={styles.sectionHeader}>Bio</SemiBoldText>
@@ -204,17 +204,12 @@ export default class Details extends React.Component {
             )}
             {talk ? (
               <SemiBoldText style={styles.sectionHeader}>
-                {talk && talk.type === 0
-                  ? 'Talk description'
-                  : 'Workshop description'}
+                {talk && talk.type === 0 ? 'Talk description' : 'Workshop description'}
               </SemiBoldText>
             ) : null}
             {talk ? (
               <Markdown styles={markdownStyles}>
-                {talk.description.replace(
-                  '**Click here to see covered subjects**',
-                  ''
-                )}
+                {talk.description.replace('**Click here to see covered subjects**', '')}
               </Markdown>
             ) : null}
             {talkScreen && speakers.length > 0 ? (
@@ -225,9 +220,7 @@ export default class Details extends React.Component {
 
                 {speakers.map((speaker, i) => (
                   <View key={speaker.id}>
-                    <SemiBoldText key={speaker.id + talk.title}>
-                      {speaker.name}
-                    </SemiBoldText>
+                    <SemiBoldText key={speaker.id + talk.title}>{speaker.name}</SemiBoldText>
                     <Markdown styles={markdownStyles}>{speaker.bio}</Markdown>
                   </View>
                 ))}
@@ -236,9 +229,7 @@ export default class Details extends React.Component {
             {talk ? (
               <View>
                 <SemiBoldText style={styles.sectionHeader}>Time</SemiBoldText>
-                <RegularText>
-                  {convertUtcDateToEventTimezoneHour(talk.startDate)}
-                </RegularText>
+                <RegularText>{convertUtcDateToEventTimezoneHour(talk.startDate)}</RegularText>
                 <RegularText>{talk.room}</RegularText>
               </View>
             ) : null}
@@ -251,15 +242,16 @@ export default class Details extends React.Component {
           style={[
             Platform.OS === 'android'
               ? { height: Layout.headerHeight + Constants.statusBarHeight }
-              : null,
+              : null
           ]}
           renderLeftButton={() => (
             <View
               style={{
                 // gross dumb things
                 paddingTop: Platform.OS === 'android' ? 30 : 0,
-                marginTop: Layout.notchHeight > 0 ? -5 : 0,
-              }}>
+                marginTop: Layout.notchHeight > 0 ? -5 : 0
+              }}
+            >
               <CloseButton
                 onPress={() => this.props.navigation.goBack()}
                 tintColor="#fff"
@@ -271,7 +263,7 @@ export default class Details extends React.Component {
             talk ? <SavedButtonNavigationItem talk={talk} /> : null;
           }}
         />
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 
@@ -279,10 +271,9 @@ export default class Details extends React.Component {
     return (
       <TouchableOpacity
         hitSlop={{ top: 15, left: 15, right: 15, bottom: 15 }}
-        onPress={handlePress}>
-        <SemiBoldText style={{ color: Colors.blue, marginTop: 5 }}>
-          Read more
-        </SemiBoldText>
+        onPress={handlePress}
+      >
+        <SemiBoldText style={{ color: Colors.blue, marginTop: 5 }}>Read more</SemiBoldText>
       </TouchableOpacity>
     );
   };
@@ -291,10 +282,9 @@ export default class Details extends React.Component {
     return (
       <TouchableOpacity
         hitSlop={{ top: 15, left: 15, right: 15, bottom: 15 }}
-        onPress={handlePress}>
-        <SemiBoldText style={{ color: Colors.blue, marginTop: 5 }}>
-          Show less
-        </SemiBoldText>
+        onPress={handlePress}
+      >
+        <SemiBoldText style={{ color: Colors.blue, marginTop: 5 }}>Show less</SemiBoldText>
       </TouchableOpacity>
     );
   };
@@ -312,7 +302,7 @@ export default class Details extends React.Component {
   };
 }
 const markdownStyles = {
-  text: {},
+  text: {}
 };
 const styles = StyleSheet.create({
   container: {},
@@ -320,41 +310,41 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    marginBottom: 10,
+    marginBottom: 10
   },
   avatarMultiple: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    marginBottom: 10,
+    marginBottom: 10
   },
   content: {
     backgroundColor: '#fff',
     paddingBottom: 20,
-    paddingHorizontal: 20,
+    paddingHorizontal: 20
   },
   markdownBio: {
     backgroundColor: '#fff',
     paddingBottom: 20,
     paddingHorizontal: 20,
     width: 300,
-    height: 200,
+    height: 200
   },
   markdownTalkDescription: {
     backgroundColor: '#fff',
     paddingBottom: 20,
     paddingHorizontal: 20,
     width: 300,
-    height: 600,
+    height: 600
   },
   headerRowSpeaker: {
     flexDirection: 'row',
-    height: 140,
+    height: 140
   },
   headerColumnSpeaker: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 5,
+    paddingHorizontal: 5
   },
   headerContainer: {
     backgroundColor: Colors.blue,
@@ -362,21 +352,21 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     paddingHorizontal: 20,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   headerText: {
     color: '#fff',
-    fontSize: FontSizes.subtitle,
+    fontSize: FontSizes.subtitle
   },
   talkTitleText: {
     color: '#fff',
     fontSize: FontSizes.title,
     textAlign: 'center',
-    marginTop: 10,
+    marginTop: 10
   },
   sectionHeader: {
     fontSize: FontSizes.bodyTitle,
     marginTop: 15,
-    marginBottom: 3,
-  },
+    marginBottom: 3
+  }
 });
