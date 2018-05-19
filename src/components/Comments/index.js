@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, AsyncStorage } from 'react-native';
+import { View, AsyncStorage, Text } from 'react-native';
 import { RegularText, SemiBoldText } from '../../components/StyledText';
 import { questionsRef } from '../../utils';
 
@@ -10,7 +10,8 @@ export default class Comments extends Component {
   state = {
     comments: [],
     hasTickets: undefined,
-    ticket: undefined
+    ticket: undefined,
+    hasRaisedHands: ['Max', 'Pedro']
   };
 
   questionsRef = null;
@@ -31,16 +32,19 @@ export default class Comments extends Component {
 
   queryFirebase() {
     const { talk } = this.props;
-    this.questionsRef = questionsRef.where('talkId', '==', talk.id).orderBy('upvotes', 'desc').onSnapshot(querySnapshot => {
-      const comments = [];
-      querySnapshot.forEach(doc => {
-        const comment = doc.data();
-        comment.id = doc.id;
-        comments.push(comment);
-      });
+    this.questionsRef = questionsRef
+      .where('talkId', '==', talk.id)
+      .orderBy('upvotes', 'desc')
+      .onSnapshot(querySnapshot => {
+        const comments = [];
+        querySnapshot.forEach(doc => {
+          const comment = doc.data();
+          comment.id = doc.id;
+          comments.push(comment);
+        });
 
-      this.setState({ comments: comments });
-    });
+        this.setState({ comments: comments });
+      });
   }
 
   getMyTicket() {
@@ -55,7 +59,7 @@ export default class Comments extends Component {
   upvote({ id, upvotes, upvotedBy, uid, hasVoted }) {
     let updatedUpvotedBy;
     if (hasVoted) {
-      updatedUpvotedBy = upvotedBy.filter((votedId) => votedId !== uid);
+      updatedUpvotedBy = upvotedBy.filter(votedId => votedId !== uid);
     } else {
       updatedUpvotedBy = [...upvotedBy, uid];
     }
@@ -77,10 +81,33 @@ export default class Comments extends Component {
   }
 
   render() {
-    const { comments, hasTickets, ticket } = this.state;
-    const { talk } = this.props;
+    const { comments, hasTickets, ticket, hasRaisedHands } = this.state;
     return (
       <View>
+        {hasRaisedHands.length > 0 ? (
+          <View
+            style={{
+              borderColor: 'gray',
+              borderWidth: 0,
+              padding: 10,
+              borderRadius: 5,
+              backgroundColor: '#fff',
+              flex: 1,
+              shadowColor: '#000',
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              marginBottom: 10,
+              shadowOffset: { width: 2, height: 2 }
+            }}
+          >
+            {hasRaisedHands.map((value, index) => <Text key={index}>{value}</Text>)}
+            <Text>has/have a raised hand!</Text>
+          </View>
+        ) : (
+          <View>
+            <Text>no length</Text>
+          </View>
+        )}
         {hasTickets ? (
           <View>
             <SemiBoldText>Comments Area</SemiBoldText>
