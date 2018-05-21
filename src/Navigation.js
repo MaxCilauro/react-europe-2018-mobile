@@ -60,8 +60,9 @@ _.each(FullSchedule, (day, i) => {
   };
 });
 
-const ScheduleNavigation = TabNavigator(navSchedule, {
-  initialRouteName: moment().format('dddd'),
+const date = moment().format('dddd');
+
+const tabConfig = {
   lazy: true,
   swipeEnabled: false,
   animationEnabled: false,
@@ -71,7 +72,14 @@ const ScheduleNavigation = TabNavigator(navSchedule, {
     style: { backgroundColor: '#333' },
     activeTintColor: '#fff',
   },
-});
+}
+// the dates are hardcoded in the schedule.js
+// but we can't locate the tab nav in a day that is not the event's day. so...
+if (date !== 'Monday') {
+  tabConfig.initialRouteName = date;
+}
+
+const ScheduleNavigation = TabNavigator(navSchedule, tabConfig);
 
 export function connectDrawerButton(WrappedComponent) {
   const ConnectedDrawerButton = (props, context) => {
